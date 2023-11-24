@@ -1,0 +1,25 @@
+#include <mega32.h>
+
+interrupt [EXT_INT0] void ext_int0_isr(void)
+{
+PORTA = PORTA>>1;
+if(PORTA == 0x08) PORTA =0x80;
+
+}
+
+void main()
+{
+DDRA =0xf0;
+PORTA = 0x80;
+             // External Interrupt(s) initialization
+// INT0: On
+// INT0 Mode: Falling Edge
+// INT1: Off
+// INT2: Off
+GICR|=(0<<INT1) | (1<<INT0) | (0<<INT2);
+MCUCR=(0<<ISC11) | (0<<ISC10) | (1<<ISC01) | (0<<ISC00);
+MCUCSR=(0<<ISC2);
+GIFR=(0<<INTF1) | (1<<INTF0) | (0<<INTF2);
+#asm("sei")
+    while(1);
+}
